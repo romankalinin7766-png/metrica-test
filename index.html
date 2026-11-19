@@ -5,12 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тестовый стенд Яндекс Метрики</title>
     <style>
-        body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; line-height: 1.5; }
-        .card { border: 1px solid #ddd; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        button { background: #005bb5; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; line-height: 1.5; color: #222; }
+        .card { border: 1px solid #ddd; border-radius: 12px; padding: 20px; margin-bottom: 20px; background: #fff; }
+        button {
+            background: #005bb5;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            display: inline-block;
+            transition: background 0.15s ease, transform 0.05s ease;
+        }
+        button:hover { background: #00448a; }
+        button:active { transform: scale(0.98); }
         button.esia { background: #0d4cd3; }
-        input[type="text"], input[type="tel"] { width: 100%; padding: 8px; margin: 6px 0 14px; box-sizing: border-box; }
-        .log { background: #f4f4f4; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 180px; overflow-y: auto; }
+        button.esia:hover { background: #09389e; }
+        button.submit-btn { background: #198754; width: 100%; margin-top: 6px; }
+        button.submit-btn:hover { background: #146c43; }
+        input[type="text"], input[type="tel"] { width: 100%; padding: 10px; margin: 6px 0 14px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+        .status-badge { display: inline-block; margin-left: 10px; font-size: 13px; color: #198754; font-weight: 500; }
+        .log { background: #f4f4f4; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; border: 1px solid #e0e0e0; }
     </style>
 
     <!-- Yandex.Metrika counter -->
@@ -32,34 +49,37 @@
     <h2>Тестовая страница продукта</h2>
 
     <!-- Блок 1: Калькулятор -->
-    <div class="card">
+    <div class="card" id="calcBlock">
         <h3>1. Кредитный калькулятор</h3>
-        <label>Сумма: <b id="amountVal">500000</b> ₽</label><br>
+        <label for="amountRange">Сумма кредита: <b id="amountVal">500 000</b> ₽</label><br>
         <input type="range" id="amountRange" min="100000" max="3000000" step="50000" value="500000" style="width:100%"><br><br>
-        <button id="calcApplyBtn">Оформить по расчету</button>
+        <button type="button" id="calcApplyBtn" data-ym-goal="credit_calc_apply">Оформить по расчету</button>
+        <span class="status-badge" id="calcStatus"></span>
     </div>
 
     <!-- Блок 2: Госуслуги -->
-    <div class="card">
+    <div class="card" id="esiaBlock">
         <h3>2. Авторизация через ЕСИА</h3>
-        <button class="esia" id="esiaBtn">Заполнить через Госуслуги</button>
+        <button type="button" class="esia" id="esiaBtn" data-ym-goal="esia_auth_click">Заполнить через Госуслуги</button>
+        <span class="status-badge" id="esiaStatus"></span>
     </div>
 
     <!-- Блок 3: Форма заявки -->
-    <div class="card">
+    <div class="card" id="formBlock">
         <h3>3. Анкета на карту / кредит</h3>
-        <form id="creditForm">
-            <label>ФИО</label>
-            <input type="text" name="fio" placeholder="Иванов Иван Иванович">
+        <form id="creditForm" action="#submitted" method="post">
+            <label for="inputFio">ФИО</label>
+            <input type="text" id="inputFio" name="fio" class="ym-disable-keys" placeholder="Иванов Иван Иванович">
             
-            <label>Телефон</label>
-            <input type="tel" name="phone" placeholder="+7 (999) 000-00-00">
+            <label for="inputPhone">Телефон</label>
+            <input type="tel" id="inputPhone" name="phone" class="ym-disable-keys" placeholder="+7 (999) 000-00-00">
             
-            <label>СНИЛС</label>
-            <input type="text" name="snils" placeholder="000-000-000 00">
+            <label for="inputSnils">СНИЛС</label>
+            <input type="text" id="inputSnils" name="snils" class="ym-disable-keys" placeholder="000-000-000 00">
             
-            <button type="submit">Отправить заявку</button>
+            <button type="submit" id="submitFormBtn" class="submit-btn" data-ym-goal="credit_form_submit">Отправить заявку</button>
         </form>
+        <span class="status-badge" id="formStatus" style="display:block; margin-top:10px; margin-left:0;"></span>
     </div>
 
     <h4>Лог отправленных событий (для проверки):</h4>
@@ -85,7 +105,7 @@
         let calcTimer;
         const range = document.getElementById('amountRange');
         range.addEventListener('input', (e) => {
-            document.getElementById('amountVal').textContent = e.target.value;
+            document.getElementById('amountVal').textContent = Number(e.target.value).toLocaleString('ru-RU');
             clearTimeout(calcTimer);
             calcTimer = setTimeout(() => {
                 sendGoal('credit_calc_use', { amount: Number(e.target.value), term_months: 36 });
@@ -93,19 +113,26 @@
         });
 
         document.getElementById('calcApplyBtn').addEventListener('click', () => {
-            sendGoal('credit_calc_apply', { amount: Number(range.value), term_months: 36 });
+            const amount = Number(range.value);
+            sendGoal('credit_calc_apply', { amount: amount, term_months: 36 });
+            document.getElementById('calcStatus').textContent = `✓ Выбрана сумма ${amount.toLocaleString('ru-RU')} ₽`;
+            document.getElementById('inputFio').focus();
         });
 
         // 2. Имитация Госуслуг
         document.getElementById('esiaBtn').addEventListener('click', () => {
+            const status = document.getElementById('esiaStatus');
+            status.textContent = 'Запрос к ЕСИА...';
             sendGoal('esia_auth_click');
+            
             setTimeout(() => {
                 isEsiaUsed = true;
-                document.querySelector('[name="fio"]').value = 'Калинин Роман Владимирович';
-                document.querySelector('[name="phone"]').value = '+7 (999) 123-45-67';
+                document.getElementById('inputFio').value = 'Калинин Роман Владимирович';
+                document.getElementById('inputPhone').value = '+7 (999) 123-45-67';
+                status.textContent = '✓ Данные подставлены из Госуслуг';
                 sendGoal('esia_auth_success');
                 sendGoal('esia_prefill_complete', { prefill_percent: 66 });
-            }, 800);
+            }, 600);
         });
 
         // 3. Поля формы и замер времени
@@ -127,7 +154,7 @@
             e.preventDefault();
             const fillTime = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
             sendGoal('credit_form_submit', { is_esia: isEsiaUsed, fill_time_sec: fillTime });
-            alert('Заявка отправлена! Проверьте консоль или лог ниже.');
+            document.getElementById('formStatus').textContent = `✓ Заявка успешно отправлена (время заполнения: ${fillTime} сек.)`;
         });
     </script>
 </body>
