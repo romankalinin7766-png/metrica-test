@@ -1,161 +1,452 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тестовый стенд Яндекс Метрики</title>
-    <style>
-        body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; line-height: 1.5; color: #222; }
-        .card { border: 1px solid #ddd; border-radius: 12px; padding: 20px; margin-bottom: 20px; background: #fff; }
-        button {
-            background: #005bb5;
-            color: #fff;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
-            display: inline-block;
-            transition: background 0.15s ease, transform 0.05s ease;
-        }
-        button:hover { background: #00448a; }
-        button:active { transform: scale(0.98); }
-        button.esia { background: #0d4cd3; }
-        button.esia:hover { background: #09389e; }
-        button.submit-btn { background: #198754; width: 100%; margin-top: 6px; }
-        button.submit-btn:hover { background: #146c43; }
-        input[type="text"], input[type="tel"] { width: 100%; padding: 10px; margin: 6px 0 14px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
-        .status-badge { display: inline-block; margin-left: 10px; font-size: 13px; color: #198754; font-weight: 500; }
-        .log { background: #f4f4f4; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; border: 1px solid #e0e0e0; }
-    </style>
-
-    <!-- Yandex.Metrika counter -->
-    <script type="text/javascript">
-        (function(m,e,t,r,i,k,a){
-            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-            m[i].l=1*new Date();
-            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-        })(window, document,'script','https://mc.webvisor.org/metrika/tag_ww.js?id=113806394', 'ym');
-
-        ym(113806394, 'init', {ssr:true, webvisor:true, clickmap:true, referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
-    </script>
-    <!-- /Yandex.Metrika counter -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Полигон Яндекс Метрики — 113806394</title>
+<style>
+:root{--bg:#f2f3f5;--fg:#16181d;--bd:#16181d;--mut:#5a606b;--pn:#fff;--ac:#16181d;--acf:#fff;--ok:#0a6b2d;--er:#b00020;--hl:#e6e8ec}
+@media (prefers-color-scheme:dark){:root{--bg:#14161a;--fg:#e8eaee;--bd:#8a909c;--mut:#9aa1ad;--pn:#1c1f25;--ac:#e8eaee;--acf:#14161a;--ok:#4cd07d;--er:#ff6b80;--hl:#272b33}}
+*{box-sizing:border-box}
+body{margin:0;padding:16px 16px 340px;background:var(--bg);color:var(--fg);font:14px/1.45 ui-monospace,Menlo,Consolas,monospace}
+h1{font-size:16px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.04em}
+h2{font-size:13px;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--bd);text-transform:uppercase}
+main{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+section{background:var(--pn);border:1px solid var(--bd);padding:12px;min-width:0}
+.w2{grid-column:1/-1}
+@media (max-width:760px){main{grid-template-columns:1fr}}
+button,.btn{font:inherit;cursor:pointer;background:var(--ac);color:var(--acf);border:1px solid var(--bd);padding:7px 12px;text-decoration:none;display:inline-block}
+button:hover,.btn:hover{background:var(--pn);color:var(--fg)}
+button:active,.btn:active{transform:translateY(1px)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.sec{background:var(--pn);color:var(--fg)}button.sec:hover{background:var(--hl)}
+a{color:var(--fg)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mut{color:var(--mut);font-size:12px}
+/* slider */
+#slider-view>button{display:none;width:100%;text-align:left;padding:18px;background:var(--pn);color:var(--fg);border:1px solid var(--bd)}
+#slider-view>button.active{display:block}
+#slider-view>button:hover{background:var(--hl)}
+#slider-view b{display:block;font-size:16px}
+.dots button{padding:2px 9px;background:var(--pn);color:var(--fg)}
+.dots button.active{background:var(--ac);color:var(--acf)}
+.status{margin-top:8px;padding:6px 8px;border:1px dashed var(--bd);min-height:32px}
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media (max-width:760px){.cards{grid-template-columns:1fr}}
+.card{border:1px solid var(--bd);padding:10px;display:flex;flex-direction:column;gap:6px}
+.card h3{margin:0;font-size:14px}
+/* forms */
+label{display:block;margin:8px 0 2px;font-size:12px;text-transform:uppercase}
+input[type=text],input[type=tel],input[type=number],select{width:100%;font:inherit;padding:7px;background:var(--pn);color:var(--fg);border:1px solid var(--bd)}
+input[type=range]{width:100%}
+.inv{border-color:var(--er)!important;background:var(--hl)}
+.err{color:var(--er);font-size:12px;min-height:16px}
+.sum{font-size:18px;font-weight:bold;margin:8px 0}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media (max-width:760px){.fg{grid-template-columns:1fr}}
+#form-msg{margin-top:8px;font-weight:bold}
+/* debug */
+#dbg{position:fixed;left:0;right:0;bottom:0;background:var(--pn);border-top:2px solid var(--bd);padding:8px 12px;max-height:42vh;overflow:auto;z-index:50;font-size:12px}
+#dbg .g{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 16px;max-width:1100px;margin:0 auto}
+@media (max-width:760px){#dbg .g{grid-template-columns:1fr}}
+#dbg.min .body{display:none}
+#log{list-style:none;margin:6px auto 0;padding:0;max-width:1100px;height:130px;overflow:auto;border:1px solid var(--bd);background:var(--bg)}
+#log li{padding:3px 6px;border-bottom:1px solid var(--hl);word-break:break-all}
+#log time{color:var(--mut)}
+.ok{color:var(--ok)}.bad{color:var(--er)}
+</style>
 </head>
 <body>
-    <noscript><div><img src="https://mc.yandex.ru/watch/113806394" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.webvisor.org/metrika/tag_ww.js?id=113806394', 'ym');
 
-    <h2>Тестовая страница продукта</h2>
+    // Склейка сессии: если вернулись с gosuslugi.ru — подставляем сохранённый URL как referrer
+    var __ymRef = document.referrer;
+    try {
+        var __prev = sessionStorage.getItem('ym_esia_prev_url');
+        var __rh = __ymRef ? new URL(__ymRef).hostname : '';
+        if (__prev && /(^|\.)gosuslugi\.ru$/.test(__rh)) { __ymRef = __prev; }
+    } catch (e) {}
+    window.__ymRef = __ymRef;
 
-    <!-- Блок 1: Калькулятор -->
-    <div class="card" id="calcBlock">
-        <h3>1. Кредитный калькулятор</h3>
-        <label for="amountRange">Сумма кредита: <b id="amountVal">500 000</b> ₽</label><br>
-        <input type="range" id="amountRange" min="100000" max="3000000" step="50000" value="500000" style="width:100%"><br><br>
-        <button type="button" id="calcApplyBtn" data-ym-goal="credit_calc_apply">Оформить по расчету</button>
-        <span class="status-badge" id="calcStatus"></span>
+    ym(113806394, 'init', {ssr:true, webvisor:true, clickmap:true, referrer: __ymRef, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/113806394" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+<h1>Полигон целей Яндекс Метрики · счётчик 113806394</h1>
+<main>
+
+<section id="blk-slider" class="w2">
+  <h2>1. Карусель продуктов</h2>
+  <div id="slider-view"></div>
+  <div class="row" style="margin-top:8px">
+    <button type="button" id="slider-prev" class="sec">← Назад</button>
+    <span class="dots row" id="slider-dots"></span>
+    <button type="button" id="slider-next" class="sec">Вперёд →</button>
+  </div>
+  <div class="status" id="slider-status" role="status">Продукт не выбран</div>
+</section>
+
+<section id="blk-cards" class="w2">
+  <h2>2. Витрина продуктов</h2>
+  <div class="cards">
+    <div class="card" data-group="credits"><h3>Кредиты</h3>
+      <a href="?from=product_card_link" data-sub="credit_cash">Кредит наличными</a>
+      <a href="?from=product_card_link" data-sub="credit_refi">Рефинансирование</a>
+      <button type="button" id="cta-credits" data-group="credits">Оформить онлайн</button></div>
+    <div class="card" data-group="deposits"><h3>Вклады</h3>
+      <a href="?from=product_card_link" data-sub="deposit_save">Накопительный вклад</a>
+      <a href="?from=product_card_link" data-sub="deposit_term">Срочный вклад</a>
+      <button type="button" id="cta-deposits" data-group="deposits">Оформить онлайн</button></div>
+    <div class="card" data-group="cards"><h3>Карты</h3>
+      <a href="?from=product_card_link" data-sub="card_credit">Кредитная карта</a>
+      <a href="?from=product_card_link" data-sub="card_debit">Дебетовая карта</a>
+      <button type="button" id="cta-cards" data-group="cards">Оформить онлайн</button></div>
+  </div>
+</section>
+
+<section id="blk-calc">
+  <h2>3. Кредитный калькулятор</h2>
+  <label for="c-sum">Сумма: <span id="c-sum-v"></span> ₽</label>
+  <input type="range" id="c-sum" min="50000" max="5000000" step="10000" value="500000">
+  <label for="c-term">Срок: <span id="c-term-v"></span> мес.</label>
+  <input type="range" id="c-term" min="6" max="84" step="1" value="36">
+  <div class="sum">Платёж: <span id="c-pay"></span> ₽/мес</div>
+  <div class="mut">Ставка 18% годовых, аннуитет (для теста)</div>
+  <button type="button" id="calc-apply" style="margin-top:8px">Перейти к оформлению по расчёту</button>
+</section>
+
+<section id="blk-esia">
+  <h2>4. Внешний ресурс (Госуслуги)</h2>
+  <p class="mut">Перед уходом: URL → sessionStorage (ym_esia_prev_url), цель esia_auth_click, переход после подтверждения хита.</p>
+  <label><input type="checkbox" id="esia-blank"> Открыть в новой вкладке</label>
+  <div class="row" style="margin-top:8px">
+    <a class="btn" id="esia-link" href="https://www.gosuslugi.ru/" rel="noopener">Войти через Госуслуги</a>
+    <button type="button" id="esia-sim" class="sec">Симулировать автозаполнение (без ухода со страницы)</button>
+  </div>
+</section>
+
+<section id="blk-form" class="w2">
+  <h2>5. Заявка</h2>
+  <form id="app-form" novalidate autocomplete="off">
+    <div class="fg">
+      <div><label for="f-name">ФИО (кириллица)</label>
+        <input type="text" id="f-name" name="fio" class="ym-disable-keys" placeholder="Иванов Иван Иванович"><div class="err" id="e-name"></div></div>
+      <div><label for="f-phone">Телефон</label>
+        <input type="tel" id="f-phone" name="phone" class="ym-disable-keys" placeholder="+7 (999) 000-00-00" inputmode="numeric"><div class="err" id="e-phone"></div></div>
+      <div><label for="f-snils">СНИЛС</label>
+        <input type="text" id="f-snils" name="snils" class="ym-disable-keys" placeholder="000-000-000 00" inputmode="numeric"><div class="err" id="e-snils"></div></div>
+      <div><label for="f-income">Ежемесячный доход, ₽</label>
+        <input type="number" id="f-income" name="income" class="ym-disable-keys" min="1" step="1"><div class="err" id="e-income"></div></div>
+      <div><label for="f-product">Продукт</label>
+        <select id="f-product" name="product" class="ym-disable-keys">
+          <option value="credit_cash">Кредит наличными</option><option value="deposit">Вклад</option>
+          <option value="credit_card">Кредитная карта</option><option value="salary">Зарплатный проект</option><option value="auto">Автокредит</option></select><div class="err"></div></div>
+      <div><label for="f-calc">Параметры расчёта</label>
+        <input type="text" id="f-calc" name="calc" class="ym-disable-keys" readonly placeholder="— не передан —"><div class="err"></div></div>
     </div>
+    <label style="text-transform:none"><input type="checkbox" id="f-consent" name="consent" class="ym-disable-keys"> Согласен на обработку персональных данных</label>
+    <div class="err" id="e-consent"></div>
+    <button type="submit" id="f-submit">Отправить заявку</button>
+    <div id="form-msg" role="status"></div>
+  </form>
+</section>
+</main>
 
-    <!-- Блок 2: Госуслуги -->
-    <div class="card" id="esiaBlock">
-        <h3>2. Авторизация через ЕСИА</h3>
-        <button type="button" class="esia" id="esiaBtn" data-ym-goal="esia_auth_click">Заполнить через Госуслуги</button>
-        <span class="status-badge" id="esiaStatus"></span>
+<aside id="dbg" aria-label="Консоль отладки Метрики">
+  <div class="row" style="max-width:1100px;margin:0 auto 6px"><b>КОНСОЛЬ МЕТРИКИ</b>
+    <button type="button" id="dbg-toggle" class="sec">Свернуть/развернуть</button>
+    <button type="button" id="dbg-flags" class="sec">Сбросить флаги сессии</button></div>
+  <div class="body">
+    <div class="g">
+      <div>ClientID: <b id="d-cid">…</b> <button type="button" id="d-copy" class="sec">Копировать</button></div>
+      <div>Скрипт Метрики: <b id="d-status">загрузка…</b></div>
+      <div>Referrer в Метрику: <b id="d-ref"></b></div>
+      <div>GET-параметры: <b id="d-qs"></b></div>
     </div>
+    <ul id="log"></ul>
+    <div class="row" style="max-width:1100px;margin:6px auto 0"><button type="button" id="log-clear" class="sec">Очистить лог</button></div>
+  </div>
+</aside>
 
-    <!-- Блок 3: Форма заявки -->
-    <div class="card" id="formBlock">
-        <h3>3. Анкета на карту / кредит</h3>
-        <form id="creditForm" action="#submitted" method="post">
-            <label for="inputFio">ФИО</label>
-            <input type="text" id="inputFio" name="fio" class="ym-disable-keys" placeholder="Иванов Иван Иванович">
-            
-            <label for="inputPhone">Телефон</label>
-            <input type="tel" id="inputPhone" name="phone" class="ym-disable-keys" placeholder="+7 (999) 000-00-00">
-            
-            <label for="inputSnils">СНИЛС</label>
-            <input type="text" id="inputSnils" name="snils" class="ym-disable-keys" placeholder="000-000-000 00">
-            
-            <button type="submit" id="submitFormBtn" class="submit-btn" data-ym-goal="credit_form_submit">Отправить заявку</button>
-        </form>
-        <span class="status-badge" id="formStatus" style="display:block; margin-top:10px; margin-left:0;"></span>
-    </div>
+<script>
+(function () {
+  'use strict';
+  var ID = 113806394;
+  var $ = function (s) { return document.querySelector(s); };
+  var SS = {
+    get: function (k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} },
+    del: function (k) { try { sessionStorage.removeItem(k); } catch (e) {} }
+  };
+  var pad = function (n, l) { return String(n).padStart(l || 2, '0'); };
 
-    <h4>Лог отправленных событий (для проверки):</h4>
-    <div class="log" id="eventLog">Ожидание действий...</div>
+  /* ---------- лог и безопасная обёртка ym ---------- */
+  function addLog(name, params, note) {
+    var d = new Date();
+    var li = document.createElement('li');
+    var t = document.createElement('time');
+    t.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + '.' + pad(d.getMilliseconds(), 3) + ' ';
+    var b = document.createElement('b'); b.textContent = name;
+    var p = document.createElement('span');
+    p.textContent = ' ' + JSON.stringify(params || {}) + (note ? ' ' + note : '');
+    li.appendChild(t); li.appendChild(b); li.appendChild(p);
+    var log = $('#log'); log.insertBefore(li, log.firstChild);
+  }
+  // ym() до загрузки скрипта складывает вызовы в очередь (stub из сниппета); здесь — только try/catch + таймаут колбэка
+  function goal(name, params, cb) {
+    params = params || {};
+    var done = false;
+    function fin() { if (!done) { done = true; if (cb) cb(); } }
+    addLog(name, params);
+    try {
+      if (typeof window.ym === 'function') window.ym(ID, 'reachGoal', name, params, fin);
+      else fin();
+    } catch (e) { addLog('ym_error', { message: String(e) }); fin(); }
+    if (cb) setTimeout(fin, 700);
+  }
 
-    <script>
-        const COUNTER_ID = 113806394;
-        let formStartTime = null;
-        let isEsiaUsed = false;
-        const focusedFields = new Set();
+  /* ---------- 1. карусель ---------- */
+  var SLIDES = [
+    { code: 'deposit', title: 'Вклад «Накопительный»', text: 'Ставка до 16% годовых' },
+    { code: 'credit_cash', title: 'Кредит наличными', text: 'До 5 000 000 ₽ без залога' },
+    { code: 'credit_card', title: 'Кредитная карта', text: '120 дней без процентов' },
+    { code: 'salary', title: 'Зарплатный проект', text: 'Для сотрудников компаний' },
+    { code: 'auto', title: 'Автокредит', text: 'От 12% годовых' }
+  ];
+  var cur = 0, view = $('#slider-view'), dots = $('#slider-dots');
+  SLIDES.forEach(function (s, i) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.id = 'slide-' + (i + 1);
+    b.setAttribute('data-slide-pos', String(i + 1));
+    b.setAttribute('data-product-code', s.code);
+    var h = document.createElement('b'); h.textContent = s.title;
+    var t = document.createElement('span'); t.textContent = s.text;
+    b.appendChild(h); b.appendChild(t);
+    b.addEventListener('click', function () {
+      var pos = Number(b.getAttribute('data-slide-pos'));
+      $('#slider-status').textContent = 'Выбран продукт: ' + s.title + ' (позиция ' + pos + ', код ' + s.code + ')';
+      $('#f-product').value = s.code;
+      goal('slider_banner_click', { slide_pos: pos, product: s.code });
+    });
+    view.appendChild(b);
+    var d = document.createElement('button');
+    d.type = 'button'; d.id = 'dot-' + (i + 1); d.textContent = String(i + 1);
+    d.setAttribute('aria-label', 'Слайд ' + (i + 1));
+    d.addEventListener('click', function () { show(i); });
+    dots.appendChild(d);
+  });
+  function show(i) {
+    cur = (i + SLIDES.length) % SLIDES.length;
+    Array.prototype.forEach.call(view.children, function (el, k) { el.classList.toggle('active', k === cur); });
+    Array.prototype.forEach.call(dots.children, function (el, k) { el.classList.toggle('active', k === cur); });
+  }
+  $('#slider-prev').addEventListener('click', function () { show(cur - 1); });
+  $('#slider-next').addEventListener('click', function () { show(cur + 1); });
+  show(0);
 
-        function sendGoal(goalName, params = {}) {
-            if (typeof ym === 'function') {
-                ym(COUNTER_ID, 'reachGoal', goalName, params);
-            }
-            const logBox = document.getElementById('eventLog');
-            const time = new Date().toLocaleTimeString();
-            logBox.innerHTML = `[${time}] <b>${goalName}</b>: ${JSON.stringify(params)}<br>` + logBox.innerHTML;
-            console.log('YM Goal:', goalName, params);
-        }
+  /* ---------- 2. витрина ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll('.card a[data-sub]'), function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault(); // без перезагрузки; stopPropagation НЕ используется
+      var u = new URL(location.href);
+      u.searchParams.set('from', 'product_card_link');
+      u.searchParams.set('sub', a.getAttribute('data-sub'));
+      history.pushState({}, '', u.toString());
+      renderUrlInfo();
+      goal('product_card_link_click', { group: a.parentNode.getAttribute('data-group'), sub: a.getAttribute('data-sub') });
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.card button[data-group]'), function (b) {
+    b.addEventListener('click', function () { goal('product_card_cta', { group: b.getAttribute('data-group') }); });
+  });
 
-        // 1. Калькулятор с debounce
-        let calcTimer;
-        const range = document.getElementById('amountRange');
-        range.addEventListener('input', (e) => {
-            document.getElementById('amountVal').textContent = Number(e.target.value).toLocaleString('ru-RU');
-            clearTimeout(calcTimer);
-            calcTimer = setTimeout(() => {
-                sendGoal('credit_calc_use', { amount: Number(e.target.value), term_months: 36 });
-            }, 1500);
-        });
+  /* ---------- 3. калькулятор ---------- */
+  var cs = $('#c-sum'), ct = $('#c-term'), calcTimer = null, calcSnap = '';
+  function payment() {
+    var P = Number(cs.value), n = Number(ct.value), r = 0.18 / 12;
+    return Math.round(P * r / (1 - Math.pow(1 + r, -n)));
+  }
+  function calcRender() {
+    $('#c-sum-v').textContent = Number(cs.value).toLocaleString('ru-RU');
+    $('#c-term-v').textContent = ct.value;
+    $('#c-pay').textContent = payment().toLocaleString('ru-RU');
+  }
+  function calcChanged() {
+    calcRender();
+    clearTimeout(calcTimer);
+    calcTimer = setTimeout(function () {
+      goal('credit_calc_use', { sum: Number(cs.value), term: Number(ct.value), payment: payment() });
+    }, 1500);
+  }
+  cs.addEventListener('input', calcChanged);
+  ct.addEventListener('input', calcChanged);
+  calcRender();
+  $('#calc-apply').addEventListener('click', function () {
+    var p = { sum: Number(cs.value), term: Number(ct.value), payment: payment() };
+    goal('credit_calc_apply', p);
+    calcSnap = p.sum + ' ₽ / ' + p.term + ' мес. / ' + p.payment + ' ₽ в мес.';
+    $('#f-calc').value = calcSnap;
+    $('#f-product').value = 'credit_cash';
+    var f = $('#blk-form'); f.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function () { $('#f-name').focus({ preventScroll: true }); }, 450);
+  });
 
-        document.getElementById('calcApplyBtn').addEventListener('click', () => {
-            const amount = Number(range.value);
-            sendGoal('credit_calc_apply', { amount: amount, term_months: 36 });
-            document.getElementById('calcStatus').textContent = `✓ Выбрана сумма ${amount.toLocaleString('ru-RU')} ₽`;
-            document.getElementById('inputFio').focus();
-        });
+  /* ---------- 4. внешний ресурс ---------- */
+  var isEsia = false;
+  $('#esia-link').addEventListener('click', function (e) {
+    SS.set('ym_esia_prev_url', window.location.href);
+    var href = this.href, blank = $('#esia-blank').checked;
+    if (blank) { goal('esia_auth_click', { target: 'new_tab' }); return; }
+    e.preventDefault();
+    goal('esia_auth_click', { target: 'same_tab' }, function () { window.location.assign(href); });
+  });
+  function setVal(el, v) { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); }
+  $('#esia-sim').addEventListener('click', function () {
+    isEsia = true;
+    setVal($('#f-name'), 'Иванов Иван Иванович');
+    setVal($('#f-phone'), '9991234567');
+    setVal($('#f-snils'), '11223344595');
+    setVal($('#f-income'), '85000');
+    goal('esia_autofill_simulated', {});
+  });
 
-        // 2. Имитация Госуслуг
-        document.getElementById('esiaBtn').addEventListener('click', () => {
-            const status = document.getElementById('esiaStatus');
-            status.textContent = 'Запрос к ЕСИА...';
-            sendGoal('esia_auth_click');
-            
-            setTimeout(() => {
-                isEsiaUsed = true;
-                document.getElementById('inputFio').value = 'Калинин Роман Владимирович';
-                document.getElementById('inputPhone').value = '+7 (999) 123-45-67';
-                status.textContent = '✓ Данные подставлены из Госуслуг';
-                sendGoal('esia_auth_success');
-                sendGoal('esia_prefill_complete', { prefill_percent: 66 });
-            }, 600);
-        });
+  /* ---------- 5. форма ---------- */
+  var form = $('#app-form'), startTs = null, focused = {}, busy = false;
+  function maskPhone(v) {
+    var d = v.replace(/\D/g, '');
+    if (d[0] === '7' || d[0] === '8') d = d.slice(1);
+    d = d.slice(0, 10);
+    var o = '+7';
+    if (d.length) o += ' (' + d.slice(0, 3);
+    if (d.length > 3) o += ') ' + d.slice(3, 6);
+    if (d.length > 6) o += '-' + d.slice(6, 8);
+    if (d.length > 8) o += '-' + d.slice(8, 10);
+    return o;
+  }
+  function maskSnils(v) {
+    var d = v.replace(/\D/g, '').slice(0, 11), o = d.slice(0, 3);
+    if (d.length > 3) o += '-' + d.slice(3, 6);
+    if (d.length > 6) o += '-' + d.slice(6, 9);
+    if (d.length > 9) o += ' ' + d.slice(9, 11);
+    return o;
+  }
+  $('#f-phone').addEventListener('input', function () { this.value = maskPhone(this.value); });
+  $('#f-snils').addEventListener('input', function () { this.value = maskSnils(this.value); });
+  $('#f-name').addEventListener('input', function () { this.value = this.value.replace(/[^А-Яа-яЁё\s\-]/g, ''); });
 
-        // 3. Поля формы и замер времени
-        document.querySelectorAll('#creditForm input').forEach(input => {
-            input.addEventListener('focus', () => {
-                if (!formStartTime) {
-                    formStartTime = Date.now();
-                    sendGoal('card_form_start', { card_name: 'Живые деньги' });
-                }
-                if (!focusedFields.has(input.name)) {
-                    focusedFields.add(input.name);
-                    sendGoal('credit_field_focus', { field_name: input.name });
-                }
-            });
-        });
+  function snilsOk(v) {
+    var d = v.replace(/\D/g, '');
+    if (d.length !== 11) return false;
+    var s = 0, i;
+    for (i = 0; i < 9; i++) s += Number(d[i]) * (9 - i);
+    var c = s < 100 ? s : s % 101; if (c === 100) c = 0;
+    return c === Number(d.slice(9));
+  }
+  var RULES = {
+    name:    { el: '#f-name',    err: '#e-name',    msg: 'Введите ФИО кириллицей (минимум 2 слова)', ok: function (v) { return /^[А-Яа-яЁё\-]{2,}(\s+[А-Яа-яЁё\-]{2,})+$/.test(v.trim()); } },
+    phone:   { el: '#f-phone',   err: '#e-phone',   msg: 'Формат: +7 (999) 000-00-00', ok: function (v) { return /^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/.test(v); } },
+    snils:   { el: '#f-snils',   err: '#e-snils',   msg: 'Неверный СНИЛС (формат или контрольная сумма)', ok: snilsOk },
+    income:  { el: '#f-income',  err: '#e-income',  msg: 'Укажите доход больше 0', ok: function (v) { return Number(v) > 0; } },
+    consent: { el: '#f-consent', err: '#e-consent', msg: 'Необходимо согласие на обработку ПДн', ok: function () { return $('#f-consent').checked; } }
+  };
+  function clearErr(k) { var r = RULES[k]; $(r.el).classList.remove('inv'); $(r.err).textContent = ''; }
+  Object.keys(RULES).forEach(function (k) {
+    $(RULES[k].el).addEventListener('input', function () { clearErr(k); });
+    $(RULES[k].el).addEventListener('change', function () { clearErr(k); });
+  });
 
-        // Отправка формы
-        document.getElementById('creditForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const fillTime = formStartTime ? Math.round((Date.now() - formStartTime) / 1000) : 0;
-            sendGoal('credit_form_submit', { is_esia: isEsiaUsed, fill_time_sec: fillTime });
-            document.getElementById('formStatus').textContent = `✓ Заявка успешно отправлена (время заполнения: ${fillTime} сек.)`;
-        });
-    </script>
+  // аналитика фокуса (focusin всплывает; stopPropagation нигде не вызывается)
+  form.addEventListener('focusin', function (e) {
+    var t = e.target; if (!t || !t.id) return;
+    if (!startTs) startTs = Date.now();
+    if (!SS.get('ym_form_start')) { SS.set('ym_form_start', '1'); goal('form_start', {}); }
+    var n = t.name || t.id;
+    if (!focused[n] && !SS.get('ym_ff_' + n)) {
+      focused[n] = true; SS.set('ym_ff_' + n, '1');
+      goal('field_focus', { field_name: n });
+    }
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (busy) return;
+    var bad = [];
+    Object.keys(RULES).forEach(function (k) {
+      var r = RULES[k], el = $(r.el);
+      if (r.ok(el.value)) clearErr(k);
+      else { bad.push(k); el.classList.add('inv'); $(r.err).textContent = r.msg; }
+    });
+    var msg = $('#form-msg');
+    if (bad.length) {
+      msg.className = 'bad'; msg.textContent = 'Ошибки валидации: ' + bad.join(', ');
+      bad.forEach(function (k) { goal('form_validation_error', { field: k }); });
+      $(RULES[bad[0]].el).focus();
+      return;
+    }
+    busy = true; $('#f-submit').disabled = true;
+    var sec = startTs ? Math.round((Date.now() - startTs) / 1000) : 0;
+    goal('form_submit_success', { fill_time_sec: sec, is_esia: isEsia, selected_product: $('#f-product').value });
+    msg.className = 'ok'; msg.textContent = 'Заявка отправлена (тест). Время заполнения: ' + sec + ' с';
+    setTimeout(function () {
+      form.reset(); startTs = null; focused = {}; isEsia = false; calcSnap = '';
+      Object.keys(RULES).forEach(clearErr);
+      busy = false; $('#f-submit').disabled = false;
+    }, 1500);
+  });
+
+  /* ---------- 6. консоль ---------- */
+  function renderUrlInfo() {
+    $('#d-ref').textContent = window.__ymRef || '(пусто)';
+    $('#d-qs').textContent = location.search || '(нет)';
+  }
+  renderUrlInfo();
+  window.addEventListener('popstate', renderUrlInfo);
+
+  var st = $('#d-status');
+  function setStatus(txt, good) { st.textContent = txt; st.className = good ? 'ok' : 'bad'; }
+  var mc = document.querySelector('script[src*="tag_ww.js"]');
+  if (mc) {
+    mc.addEventListener('load', function () { setStatus('загружен', true); });
+    mc.addEventListener('error', function () { setStatus('заблокирован (AdBlock / CSP / сеть)', false); });
+  } else { setStatus('тег не найден', false); }
+  setTimeout(function () { if (st.textContent === 'загрузка…') setStatus('нет подтверждения за 5 с (возможна блокировка)', false); }, 5000);
+
+  var cid = $('#d-cid'), tries = 0;
+  function cookieUid() { var m = document.cookie.match(/(?:^|;\s*)_ym_uid=([^;]+)/); return m ? m[1] : ''; }
+  var cidTimer = setInterval(function () {
+    tries++;
+    var c = cookieUid();
+    if (c) { cid.textContent = c; clearInterval(cidTimer); return; }
+    try { window.ym(ID, 'getClientID', function (id) { if (id) { cid.textContent = id; clearInterval(cidTimer); } }); } catch (e) {}
+    if (tries > 30) { clearInterval(cidTimer); cid.textContent = 'недоступен'; }
+  }, 500);
+  $('#d-copy').addEventListener('click', function () {
+    var v = cid.textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(v).then(function () { addLog('clipboard', { clientID: v }); }, function () { addLog('clipboard_error', {}); });
+    } else {
+      var ta = document.createElement('textarea'); ta.value = v; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  });
+  $('#log-clear').addEventListener('click', function () { $('#log').textContent = ''; });
+  $('#dbg-toggle').addEventListener('click', function () { $('#dbg').classList.toggle('min'); });
+  $('#dbg-flags').addEventListener('click', function () {
+    ['ym_form_start'].concat(['fio', 'phone', 'snils', 'income', 'product', 'calc', 'consent', 'f-name', 'f-phone', 'f-snils', 'f-income', 'f-product', 'f-calc', 'f-consent'].map(function (n) { return 'ym_ff_' + n; })).forEach(SS.del);
+    focused = {}; addLog('session_flags_reset', {});
+  });
+})();
+</script>
 </body>
 </html>
