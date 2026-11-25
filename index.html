@@ -4,6 +4,51 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Полигон Яндекс Метрики — 113806394</title>
+
+<!-- dataLayer: инициализация ДО счётчика + перехватчик push для отладочного лога -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  (function () {
+    var dl = window.dataLayer;
+    if (dl.__dbgWrapped) return;
+    var orig = dl.push;
+    dl.push = function () {
+      var res = orig.apply(dl, arguments);
+      try {
+        for (var i = 0; i < arguments.length; i++) {
+          var item = { t: Date.now(), a: arguments[i] };
+          if (typeof window.__dlHook === 'function') window.__dlHook(item);
+          else (window.__dlBuf = window.__dlBuf || []).push(item);
+        }
+      } catch (e) {}
+      return res;
+    };
+    dl.__dbgWrapped = true;
+  })();
+</script>
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.webvisor.org/metrika/tag_ww.js?id=113806394', 'ym');
+
+    // Склейка сессии: если вернулись с gosuslugi.ru — подставляем сохранённый URL как referrer
+    var __ymRef = document.referrer;
+    try {
+        var __prev = sessionStorage.getItem('ym_esia_prev_url');
+        var __rh = __ymRef ? new URL(__ymRef).hostname : '';
+        if (__prev && /(^|\.)gosuslugi\.ru$/.test(__rh)) { __ymRef = __prev; }
+    } catch (e) {}
+    window.__ymRef = __ymRef;
+
+    ym(113806394, 'init', {ssr:true, webvisor:true, clickmap:true, referrer: __ymRef, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+
 <style>
 :root{--bg:#f2f3f5;--fg:#16181d;--bd:#16181d;--mut:#5a606b;--pn:#fff;--ac:#16181d;--acf:#fff;--ok:#0a6b2d;--er:#b00020;--hl:#e6e8ec}
 @media (prefers-color-scheme:dark){:root{--bg:#14161a;--fg:#e8eaee;--bd:#8a909c;--mut:#9aa1ad;--pn:#1c1f25;--ac:#e8eaee;--acf:#14161a;--ok:#4cd07d;--er:#ff6b80;--hl:#272b33}}
@@ -59,28 +104,7 @@ input[type=range]{width:100%}
 </style>
 </head>
 <body>
-<!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.webvisor.org/metrika/tag_ww.js?id=113806394', 'ym');
-
-    // Склейка сессии: если вернулись с gosuslugi.ru — подставляем сохранённый URL как referrer
-    var __ymRef = document.referrer;
-    try {
-        var __prev = sessionStorage.getItem('ym_esia_prev_url');
-        var __rh = __ymRef ? new URL(__ymRef).hostname : '';
-        if (__prev && /(^|\.)gosuslugi\.ru$/.test(__rh)) { __ymRef = __prev; }
-    } catch (e) {}
-    window.__ymRef = __ymRef;
-
-    ym(113806394, 'init', {ssr:true, webvisor:true, clickmap:true, referrer: __ymRef, url: location.href, accurateTrackBounce:true, trackLinks:true});
-</script>
 <noscript><div><img src="https://mc.yandex.ru/watch/113806394" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
 
 <h1>Полигон целей Яндекс Метрики · счётчик 113806394</h1>
 <main>
@@ -137,7 +161,7 @@ input[type=range]{width:100%}
 
 <section id="blk-form" class="w2">
   <h2>5. Заявка</h2>
-  <form id="app-form" novalidate autocomplete="off">
+  <form id="app-form" data-form-id="request" novalidate autocomplete="off">
     <div class="fg">
       <div><label for="f-name">ФИО (кириллица)</label>
         <input type="text" id="f-name" name="fio" class="ym-disable-keys" placeholder="Иванов Иван Иванович"><div class="err" id="e-name"></div></div>
@@ -191,14 +215,16 @@ input[type=range]{width:100%}
   var pad = function (n, l) { return String(n).padStart(l || 2, '0'); };
 
   /* ---------- лог и безопасная обёртка ym ---------- */
-  function addLog(name, params, note) {
-    var d = new Date();
+  function addLog(name, params, note, tsMs) {
+    var d = tsMs ? new Date(tsMs) : new Date();
     var li = document.createElement('li');
     var t = document.createElement('time');
     t.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + '.' + pad(d.getMilliseconds(), 3) + ' ';
     var b = document.createElement('b'); b.textContent = name;
     var p = document.createElement('span');
-    p.textContent = ' ' + JSON.stringify(params || {}) + (note ? ' ' + note : '');
+    var json;
+    try { json = JSON.stringify(params || {}); } catch (e) { json = '[unserializable]'; }
+    p.textContent = ' ' + json + (note ? ' ' + note : '');
     li.appendChild(t); li.appendChild(b); li.appendChild(p);
     var log = $('#log'); log.insertBefore(li, log.firstChild);
   }
@@ -213,6 +239,16 @@ input[type=range]{width:100%}
       else fin();
     } catch (e) { addLog('ym_error', { message: String(e) }); fin(); }
     if (cb) setTimeout(fin, 700);
+  }
+
+  /* ---------- dataLayer: лог всех push + безопасный push ---------- */
+  function dlLog(item) { addLog('[DataLayer]', item.a, '', item.t); }
+  window.__dlHook = dlLog;
+  (window.__dlBuf || []).forEach(dlLog); // то, что успело уйти до загрузки этого скрипта
+  window.__dlBuf = [];
+  function dlPush(obj) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(obj);
   }
 
   /* ---------- 1. карусель ---------- */
@@ -320,8 +356,11 @@ input[type=range]{width:100%}
     goal('esia_autofill_simulated', {});
   });
 
-  /* ---------- 5. форма ---------- */
+  /* ---------- 5. форма (form_start / form_submit_success → dataLayer) ---------- */
   var form = $('#app-form'), startTs = null, focused = {}, busy = false;
+  var formStarted = false; // флаг form_start: сбрасывается только после успешной отправки
+  var FORM_ID = form.getAttribute('data-form-id') || 'request';
+
   function maskPhone(v) {
     var d = v.replace(/\D/g, '');
     if (d[0] === '7' || d[0] === '8') d = d.slice(1);
@@ -365,13 +404,17 @@ input[type=range]{width:100%}
     $(RULES[k].el).addEventListener('change', function () { clearErr(k); });
   });
 
-  // аналитика фокуса (focusin всплывает; stopPropagation нигде не вызывается)
+  // focusin всплывает (в отличие от focus); stopPropagation нигде не вызывается
   form.addEventListener('focusin', function (e) {
-    var t = e.target; if (!t || !t.id) return;
+    var t = e.target;
+    if (!t || !t.id || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
     if (!startTs) startTs = Date.now();
-    if (!SS.get('ym_form_start')) { SS.set('ym_form_start', '1'); goal('form_start', {}); }
+    if (!formStarted) {
+      formStarted = true;
+      dlPush({ 'event': 'form_start', 'form_id': FORM_ID });
+    }
     var n = t.name || t.id;
-    if (!focused[n] && !SS.get('ym_ff_' + n)) {
+    if (!focused[n] && !SS.get('ym_ff_' + n)) { // field_focus — по-прежнему прямая цель Метрики
       focused[n] = true; SS.set('ym_ff_' + n, '1');
       goal('field_focus', { field_name: n });
     }
@@ -395,10 +438,11 @@ input[type=range]{width:100%}
     }
     busy = true; $('#f-submit').disabled = true;
     var sec = startTs ? Math.round((Date.now() - startTs) / 1000) : 0;
-    goal('form_submit_success', { fill_time_sec: sec, is_esia: isEsia, selected_product: $('#f-product').value });
-    msg.className = 'ok'; msg.textContent = 'Заявка отправлена (тест). Время заполнения: ' + sec + ' с';
+    dlPush({ 'event': 'form_submit_success', 'form_id': FORM_ID });
+    msg.className = 'ok'; msg.textContent = 'Заявка отправлена (тест). Время заполнения: ' + sec + ' с' + (isEsia ? ' (автозаполнение ЕСИА)' : '');
     setTimeout(function () {
       form.reset(); startTs = null; focused = {}; isEsia = false; calcSnap = '';
+      formStarted = false; // повторный тест: form_start снова сработает
       Object.keys(RULES).forEach(clearErr);
       busy = false; $('#f-submit').disabled = false;
     }, 1500);
@@ -443,8 +487,8 @@ input[type=range]{width:100%}
   $('#log-clear').addEventListener('click', function () { $('#log').textContent = ''; });
   $('#dbg-toggle').addEventListener('click', function () { $('#dbg').classList.toggle('min'); });
   $('#dbg-flags').addEventListener('click', function () {
-    ['ym_form_start'].concat(['fio', 'phone', 'snils', 'income', 'product', 'calc', 'consent', 'f-name', 'f-phone', 'f-snils', 'f-income', 'f-product', 'f-calc', 'f-consent'].map(function (n) { return 'ym_ff_' + n; })).forEach(SS.del);
-    focused = {}; addLog('session_flags_reset', {});
+    ['fio', 'phone', 'snils', 'income', 'product', 'calc', 'consent', 'f-name', 'f-phone', 'f-snils', 'f-income', 'f-product', 'f-calc', 'f-consent'].forEach(function (n) { SS.del('ym_ff_' + n); });
+    focused = {}; formStarted = false; addLog('session_flags_reset', {});
   });
 })();
 </script>
