@@ -4,8 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Полигон Яндекс Метрики — 113806394</title>
-
-<!-- dataLayer: инициализация ДО счётчика + перехватчик push для отладочного лога -->
 <script>
   window.dataLayer = window.dataLayer || [];
   (function () {
@@ -26,7 +24,6 @@
     dl.__dbgWrapped = true;
   })();
 </script>
-
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
@@ -47,7 +44,6 @@
 
     ym(113806394, 'init', {ssr:true, webvisor:true, clickmap:true, referrer: __ymRef, url: location.href, accurateTrackBounce:true, trackLinks:true});
 </script>
-<!-- /Yandex.Metrika counter -->
 
 <style>
 :root{--bg:#f2f3f5;--fg:#16181d;--bd:#16181d;--mut:#5a606b;--pn:#fff;--ac:#16181d;--acf:#fff;--ok:#0a6b2d;--er:#b00020;--hl:#e6e8ec}
@@ -105,6 +101,7 @@ input[type=range]{width:100%}
 </head>
 <body>
 <noscript><div><img src="https://mc.yandex.ru/watch/113806394" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
 
 <h1>Полигон целей Яндекс Метрики · счётчик 113806394</h1>
 <main>
@@ -356,8 +353,8 @@ input[type=range]{width:100%}
     goal('esia_autofill_simulated', {});
   });
 
-  /* ---------- 5. форма (form_start / form_submit_success → dataLayer) ---------- */
-  var form = $('#app-form'), startTs = null, focused = {}, busy = false;
+  /* ---------- 5. форма: только form_start и form_submit_success → dataLayer ---------- */
+  var form = $('#app-form'), startTs = null, busy = false;
   var formStarted = false; // флаг form_start: сбрасывается только после успешной отправки
   var FORM_ID = form.getAttribute('data-form-id') || 'request';
 
@@ -404,20 +401,12 @@ input[type=range]{width:100%}
     $(RULES[k].el).addEventListener('change', function () { clearErr(k); });
   });
 
-  // focusin всплывает (в отличие от focus); stopPropagation нигде не вызывается
+  // focusin всплывает (в отличие от focus), поэтому один слушатель на форме ловит все поля; stopPropagation нигде не вызывается
   form.addEventListener('focusin', function (e) {
     var t = e.target;
     if (!t || !t.id || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
     if (!startTs) startTs = Date.now();
-    if (!formStarted) {
-      formStarted = true;
-      dlPush({ 'event': 'form_start', 'form_id': FORM_ID });
-    }
-    var n = t.name || t.id;
-    if (!focused[n] && !SS.get('ym_ff_' + n)) { // field_focus — по-прежнему прямая цель Метрики
-      focused[n] = true; SS.set('ym_ff_' + n, '1');
-      goal('field_focus', { field_name: n });
-    }
+    if (!formStarted) { formStarted = true; dlPush({ 'event': 'form_start', 'form_id': FORM_ID }); }
   });
 
   form.addEventListener('submit', function (e) {
@@ -432,7 +421,6 @@ input[type=range]{width:100%}
     var msg = $('#form-msg');
     if (bad.length) {
       msg.className = 'bad'; msg.textContent = 'Ошибки валидации: ' + bad.join(', ');
-      bad.forEach(function (k) { goal('form_validation_error', { field: k }); });
       $(RULES[bad[0]].el).focus();
       return;
     }
@@ -441,7 +429,7 @@ input[type=range]{width:100%}
     dlPush({ 'event': 'form_submit_success', 'form_id': FORM_ID });
     msg.className = 'ok'; msg.textContent = 'Заявка отправлена (тест). Время заполнения: ' + sec + ' с' + (isEsia ? ' (автозаполнение ЕСИА)' : '');
     setTimeout(function () {
-      form.reset(); startTs = null; focused = {}; isEsia = false; calcSnap = '';
+      form.reset(); startTs = null; isEsia = false; calcSnap = '';
       formStarted = false; // повторный тест: form_start снова сработает
       Object.keys(RULES).forEach(clearErr);
       busy = false; $('#f-submit').disabled = false;
@@ -487,8 +475,7 @@ input[type=range]{width:100%}
   $('#log-clear').addEventListener('click', function () { $('#log').textContent = ''; });
   $('#dbg-toggle').addEventListener('click', function () { $('#dbg').classList.toggle('min'); });
   $('#dbg-flags').addEventListener('click', function () {
-    ['fio', 'phone', 'snils', 'income', 'product', 'calc', 'consent', 'f-name', 'f-phone', 'f-snils', 'f-income', 'f-product', 'f-calc', 'f-consent'].forEach(function (n) { SS.del('ym_ff_' + n); });
-    focused = {}; formStarted = false; addLog('session_flags_reset', {});
+    formStarted = false; addLog('session_flags_reset', {});
   });
 })();
 </script>
