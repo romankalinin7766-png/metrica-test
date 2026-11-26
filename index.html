@@ -143,7 +143,7 @@ input[type=range]{width:100%}
 
 <section id="blk-esia">
   <h2>4. Внешний ресурс (Госуслуги)</h2>
-  <p class="mut">Тест разрыва сессии: переход на внешний домен amazing-cajeta-d05805.netlify.app и возврат с реальным Referrer.</p>
+  <p class="mut">Тест разрыва сессии: переход на внешний домен amazing-cajeta-d05805.netlify.app и автоматическое заполнение формы при возврате.</p>
   <label><input type="checkbox" id="esia-blank"> Открыть в новой вкладке</label>
   <div class="row" style="margin-top:8px">
     <a class="btn" id="esia-link" href="https://amazing-cajeta-d05805.netlify.app/" rel="noopener">Войти через Госуслуги</a>
@@ -333,6 +333,7 @@ input[type=range]{width:100%}
   function buildGatewayUrl() {
     var back = new URL(window.location.href);
     back.searchParams.delete('_ym_debug');
+    back.searchParams.set('esia_return', '1');
     var gw = new URL('https://amazing-cajeta-d05805.netlify.app/');
     gw.searchParams.set('back', back.toString());
     return gw.toString();
@@ -346,12 +347,15 @@ input[type=range]{width:100%}
     goal('esia_auth_click', { target: 'same_tab' }, function () { window.location.assign(targetUrl); });
   });
   function setVal(el, v) { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); }
-  $('#esia-sim').addEventListener('click', function () {
+  function fillEsiaFields() {
     isEsia = true;
     setVal($('#f-name'), 'Иванов Иван Иванович');
     setVal($('#f-phone'), '9991234567');
     setVal($('#f-snils'), '11223344595');
     setVal($('#f-income'), '85000');
+  }
+  $('#esia-sim').addEventListener('click', function () {
+    fillEsiaFields();
     goal('esia_autofill_simulated', {});
   });
 
@@ -409,6 +413,24 @@ input[type=range]{width:100%}
     if (!startTs) startTs = Date.now();
     if (!formStarted) { formStarted = true; dlPush({ 'event': 'form_start', 'form_id': FORM_ID }); }
   });
+
+  // Автозаполнение формы и отправка цели form_start при возврате с внешнего шлюза
+  (function handleExternalReturn() {
+    var qs = new URLSearchParams(location.search);
+    var isGatewayRef = false;
+    try {
+      isGatewayRef = /amazing-cajeta-d05805\.netlify\.app$/i.test(new URL(document.referrer).hostname);
+    } catch (e) {}
+    if (qs.get('esia_return') === '1' || isGatewayRef) {
+      fillEsiaFields();
+      if (!startTs) startTs = Date.now();
+      if (!formStarted) {
+        formStarted = true;
+        dlPush({ 'event': 'form_start', 'form_id': FORM_ID });
+        goal('form_start', { form_id: FORM_ID, source: 'esia_return' });
+      }
+    }
+  })();
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
