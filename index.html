@@ -33,13 +33,8 @@
         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
     })(window, document,'script','https://mc.webvisor.org/metrika/tag_ww.js?id=113806394', 'ym');
 
-    // Склейка сессии: если вернулись с gosuslugi.ru — подставляем сохранённый URL как referrer
+    // Тест разрыва сессии: передаём честный document.referrer без подмены
     var __ymRef = document.referrer;
-    try {
-        var __prev = sessionStorage.getItem('ym_esia_prev_url');
-        var __rh = __ymRef ? new URL(__ymRef).hostname : '';
-        if (__prev && /(^|\.)gosuslugi\.ru$/.test(__rh)) { __ymRef = __prev; }
-    } catch (e) {}
     window.__ymRef = __ymRef;
 
     ym(113806394, 'init', {ssr:true, webvisor:true, clickmap:true, referrer: __ymRef, url: location.href, accurateTrackBounce:true, trackLinks:true});
@@ -148,10 +143,10 @@ input[type=range]{width:100%}
 
 <section id="blk-esia">
   <h2>4. Внешний ресурс (Госуслуги)</h2>
-  <p class="mut">Перед уходом: URL → sessionStorage (ym_esia_prev_url), цель esia_auth_click, переход после подтверждения хита.</p>
+  <p class="mut">Тест разрыва сессии: переход на внешний домен amazing-cajeta-d05805.netlify.app и возврат с реальным Referrer.</p>
   <label><input type="checkbox" id="esia-blank"> Открыть в новой вкладке</label>
   <div class="row" style="margin-top:8px">
-    <a class="btn" id="esia-link" href="https://www.gosuslugi.ru/" rel="noopener">Войти через Госуслуги</a>
+    <a class="btn" id="esia-link" href="https://amazing-cajeta-d05805.netlify.app/" rel="noopener">Войти через Госуслуги</a>
     <button type="button" id="esia-sim" class="sec">Симулировать автозаполнение (без ухода со страницы)</button>
   </div>
 </section>
@@ -225,7 +220,6 @@ input[type=range]{width:100%}
     li.appendChild(t); li.appendChild(b); li.appendChild(p);
     var log = $('#log'); log.insertBefore(li, log.firstChild);
   }
-  // ym() до загрузки скрипта складывает вызовы в очередь (stub из сниппета); здесь — только try/catch + таймаут колбэка
   function goal(name, params, cb) {
     params = params || {};
     var done = false;
@@ -241,7 +235,7 @@ input[type=range]{width:100%}
   /* ---------- dataLayer: лог всех push + безопасный push ---------- */
   function dlLog(item) { addLog('[DataLayer]', item.a, '', item.t); }
   window.__dlHook = dlLog;
-  (window.__dlBuf || []).forEach(dlLog); // то, что успело уйти до загрузки этого скрипта
+  (window.__dlBuf || []).forEach(dlLog);
   window.__dlBuf = [];
   function dlPush(obj) {
     window.dataLayer = window.dataLayer || [];
@@ -290,7 +284,7 @@ input[type=range]{width:100%}
   /* ---------- 2. витрина ---------- */
   Array.prototype.forEach.call(document.querySelectorAll('.card a[data-sub]'), function (a) {
     a.addEventListener('click', function (e) {
-      e.preventDefault(); // без перезагрузки; stopPropagation НЕ используется
+      e.preventDefault();
       var u = new URL(location.href);
       u.searchParams.set('from', 'product_card_link');
       u.searchParams.set('sub', a.getAttribute('data-sub'));
@@ -334,14 +328,22 @@ input[type=range]{width:100%}
     setTimeout(function () { $('#f-name').focus({ preventScroll: true }); }, 450);
   });
 
-  /* ---------- 4. внешний ресурс ---------- */
+  /* ---------- 4. внешний ресурс (шлюз Netlify для теста разрыва) ---------- */
   var isEsia = false;
+  function buildGatewayUrl() {
+    var back = new URL(window.location.href);
+    back.searchParams.delete('_ym_debug');
+    var gw = new URL('https://amazing-cajeta-d05805.netlify.app/');
+    gw.searchParams.set('back', back.toString());
+    return gw.toString();
+  }
   $('#esia-link').addEventListener('click', function (e) {
-    SS.set('ym_esia_prev_url', window.location.href);
-    var href = this.href, blank = $('#esia-blank').checked;
+    var targetUrl = buildGatewayUrl();
+    this.href = targetUrl;
+    var blank = $('#esia-blank').checked;
     if (blank) { goal('esia_auth_click', { target: 'new_tab' }); return; }
     e.preventDefault();
-    goal('esia_auth_click', { target: 'same_tab' }, function () { window.location.assign(href); });
+    goal('esia_auth_click', { target: 'same_tab' }, function () { window.location.assign(targetUrl); });
   });
   function setVal(el, v) { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); }
   $('#esia-sim').addEventListener('click', function () {
@@ -355,7 +357,7 @@ input[type=range]{width:100%}
 
   /* ---------- 5. форма: только form_start и form_submit_success → dataLayer ---------- */
   var form = $('#app-form'), startTs = null, busy = false;
-  var formStarted = false; // флаг form_start: сбрасывается только после успешной отправки
+  var formStarted = false;
   var FORM_ID = form.getAttribute('data-form-id') || 'request';
 
   function maskPhone(v) {
@@ -401,7 +403,6 @@ input[type=range]{width:100%}
     $(RULES[k].el).addEventListener('change', function () { clearErr(k); });
   });
 
-  // focusin всплывает (в отличие от focus), поэтому один слушатель на форме ловит все поля; stopPropagation нигде не вызывается
   form.addEventListener('focusin', function (e) {
     var t = e.target;
     if (!t || !t.id || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
@@ -430,7 +431,7 @@ input[type=range]{width:100%}
     msg.className = 'ok'; msg.textContent = 'Заявка отправлена (тест). Время заполнения: ' + sec + ' с' + (isEsia ? ' (автозаполнение ЕСИА)' : '');
     setTimeout(function () {
       form.reset(); startTs = null; isEsia = false; calcSnap = '';
-      formStarted = false; // повторный тест: form_start снова сработает
+      formStarted = false;
       Object.keys(RULES).forEach(clearErr);
       busy = false; $('#f-submit').disabled = false;
     }, 1500);
